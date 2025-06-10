@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%">
+<head>
+  <meta charset="utf-8">
+    <!-- 引入 ECharts 库 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+</head>
+<body style="height: 100%; margin: 0">
+  <div id="container" style="height: 100%"></div>
+
+  <script type="text/javascript">
+    var dom = document.getElementById('container');
+    var myChart = echarts.init(dom, null, {
+      renderer: 'canvas',
+      useDirtyRect: false
+    });
+    var app = {};
+    
+    var option;
+
+    var dataMap = {};
+function dataFormatter(obj) {
+  // prettier-ignore
+  var pList = ['白额雁', '白鹤', '白琵鹭', '白枕鹤', '反嘴鹬'];
+  var temp;
+  for (var year = 2010; year <= 2025; year+=3) {
+    var max = 0;
+    var sum = 0;
+    temp = obj[year];
+    for (var i = 0, l = temp.length; i < l; i++) {
+      max = Math.max(max, temp[i]);
+      sum += temp[i];
+      obj[year][i] = {
+        name: pList[i],
+        value: temp[i]
+      };
+    }
+    obj[year + 'max'] = 2000; // 设置最大值为2000
+    obj[year + 'sum'] = sum;
+  }
+  return obj;
+}
+// prettier-ignore
+dataMap.dataGDP = dataFormatter({
+    2025: [384, 963, 702, 677, 576],
+    2022: [351, 926, 748, 694, 623],
+    2019: [379, 897, 682, 643, 652],
+    2016: [343, 873, 655, 615, 498],
+    2013: [354, 914, 643, 685, 472],
+    2010: [298, 932, 584, 701, 518]
+});
+// prettier-ignore
+dataMap.dataPI = dataFormatter({
+    2025: [384, 963, 702, 677, 576],
+    2022: [351, 926, 748, 694, 623],
+    2019: [379, 897, 682, 643, 652],
+    2016: [343, 873, 655, 615, 498],
+    2013: [354, 914, 643, 685, 472],
+    2010: [298, 932, 584, 701, 518]
+});
+// prettier-ignore
+dataMap.dataSI = dataFormatter({
+    2025: [384, 963, 702, 677, 576],
+    2022: [351, 926, 748, 694, 623],
+    2019: [379, 897, 682, 643, 652],
+    2016: [343, 873, 655, 615, 498],
+    2013: [354, 914, 643, 685, 472],
+    2010: [298, 932, 584, 701, 518]
+});
+// prettier-ignore
+dataMap.dataTI = dataFormatter({
+    2025: [384, 963, 702, 677, 576],
+    2022: [351, 926, 748, 694, 623],
+    2019: [379, 897, 682, 643, 652],
+    2016: [343, 873, 655, 615, 498],
+    2013: [354, 914, 643, 685, 472],
+    2010: [298, 932, 584, 701, 518]
+});
+// prettier-ignore
+dataMap.dataEstate = dataFormatter({
+    2025: [384, 963, 702, 677, 576],
+    2022: [351, 926, 748, 694, 623],
+    2019: [379, 897, 682, 643, 652],
+    2016: [343, 873, 655, 615, 498],
+    2013: [354, 914, 643, 685, 472],
+    2010: [298, 932, 584, 701, 518]
+});
+// prettier-ignore
+dataMap.dataFinancial = dataFormatter({
+    2025: [384, 963, 702, 677, 576],
+    2022: [351, 926, 748, 694, 623],
+    2019: [379, 897, 682, 643, 652],
+    2016: [343, 873, 655, 615, 498],
+    2013: [354, 914, 643, 685, 472],
+    2010: [298, 932, 584, 701, 518]
+});
+option = {
+  baseOption: {
+    timeline: {
+      axisType: 'category',
+      autoPlay: true,
+      playInterval: 1000,
+      data: [
+        '2010-01-01',
+        '2013-01-01',
+        '2016-01-01',
+        '2019-01-01',
+        '2022-01-01',
+        {
+          value: '2025-01-01',
+          tooltip: {
+            formatter: '{b} 鸟类数量达到新高'
+          },
+          symbol: 'diamond',
+          symbolSize: 16
+        }
+      ],
+      label: {
+        formatter: function (s) {
+          return new Date(s).getFullYear();
+        }
+      }
+    },
+    title: {
+      subtext: '五种鸟类数量统计'
+    },
+    tooltip: {},
+    legend: {
+      left: 'right',
+      data: ['白额雁', '白鹤', '白琵鹭', '白枕鹤', '反嘴鹬'],
+          },
+    calculable: true,
+    grid: {
+      top: 80,
+      bottom: 100,
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow',
+          label: {
+            show: true,
+            formatter: function (params) {
+              return params.value.replace('\n', '');
+            }
+          }
+        }
+      }
+    },
+    xAxis: [
+      {
+        type: 'category',
+        axisLabel: { interval: 0 },
+        data: [
+          '白额雁',
+          '白鹤',
+          '白琵鹭',
+          '白枕鹤',
+          '反嘴鹬'
+        ],
+        splitLine: { show: false }
+      }
+    ],
+    yAxis: [
+      {
+        type: 'value',
+        name: '数量',
+        max: 2000
+      }
+    ],
+    series: [
+      { name: '数量', type: 'bar' },
+            {
+        name: '鸟类数量占比',
+        type: 'pie',
+        center: ['75%', '35%'],
+        radius: '28%',
+        z: 100
+      }
+    ]
+  },
+  options: [
+    {
+      title: { text: '2010年五种鸟类数量统计' },
+      series: [
+        { data: dataMap.dataGDP['2010'] },
+        { data: dataMap.dataFinancial['2010'] },
+        { data: dataMap.dataEstate['2010'] },
+        { data: dataMap.dataPI['2010'] },
+        { data: dataMap.dataSI['2010'] },
+        { data: dataMap.dataTI['2010'] },
+        {
+          data: [
+            { name: '白额雁', value: dataMap.dataGDP['2010'][0].value },
+            { name: '白鹤', value: dataMap.dataGDP['2010'][1].value },
+            { name: '白琵鹭', value: dataMap.dataGDP['2010'][2].value },
+            { name: '白枕鹤', value: dataMap.dataGDP['2010'][3].value },
+            { name: '反嘴鹬', value: dataMap.dataGDP['2010'][4].value }
+          ]
+        }
+      ]
+    },
+    {
+      title: { text: '2013年五种鸟类数量统计' },
+      series: [
+        { data: dataMap.dataGDP['2013'] },
+        { data: dataMap.dataFinancial['2013'] },
+        { data: dataMap.dataEstate['2013'] },
+        { data: dataMap.dataPI['2013'] },
+        { data: dataMap.dataSI['2013'] },
+        { data: dataMap.dataTI['2013'] },
+        {
+          data: [
+            { name: '白额雁', value: dataMap.dataGDP['2013'][0].value },
+            { name: '白鹤', value: dataMap.dataGDP['2013'][1].value },
+            { name: '白琵鹭', value: dataMap.dataGDP['2013'][2].value },
+            { name: '白枕鹤', value: dataMap.dataGDP['2013'][3].value },
+            { name: '反嘴鹬', value: dataMap.dataGDP['2013'][4].value }
+          ]
+        }
+      ]
+    },
+    {
+      title: { text: '2016年五种鸟类数量统计' },
+      series: [
+        { data: dataMap.dataGDP['2016'] },
+        { data: dataMap.dataFinancial['2016'] },
+        { data: dataMap.dataEstate['2016'] },
+        { data: dataMap.dataPI['2016'] },
+        { data: dataMap.dataSI['2016'] },
+        { data: dataMap.dataTI['2016'] },
+        {
+          data: [
+            { name: '白额雁', value: dataMap.dataGDP['2016'][0].value },
+            { name: '白鹤', value: dataMap.dataGDP['2016'][1].value },
+            { name: '白琵鹭', value: dataMap.dataGDP['2016'][2].value },
+            { name: '白枕鹤', value: dataMap.dataGDP['2016'][3].value },
+            { name: '反嘴鹬', value: dataMap.dataGDP['2016'][4].value }
+          ]
+        }
+      ]
+    },
+    {
+      title: { text: '2019年五种鸟类数量统计' },
+      series: [
+        { data: dataMap.dataGDP['2019'] },
+        { data: dataMap.dataFinancial['2019'] },
+        { data: dataMap.dataEstate['2019'] },
+        { data: dataMap.dataPI['2019'] },
+        { data: dataMap.dataSI['2019'] },
+        { data: dataMap.dataTI['2019'] },
+        {
+          data: [
+            { name: '白额雁', value: dataMap.dataGDP['2019'][0].value },
+            { name: '白鹤', value: dataMap.dataGDP['2019'][1].value },
+            { name: '白琵鹭', value: dataMap.dataGDP['2019'][2].value },
+            { name: '白枕鹤', value: dataMap.dataGDP['2019'][3].value },
+            { name: '反嘴鹬', value: dataMap.dataGDP['2019'][4].value }
+          ]
+        }
+      ]
+    },
+    {
+      title: { text: '2022年五种鸟类数量统计' },
+      series: [
+        { data: dataMap.dataGDP['2022'] },
+        { data: dataMap.dataFinancial['2022'] },
+        { data: dataMap.dataEstate['2022'] },
+        { data: dataMap.dataPI['2022'] },
+        { data: dataMap.dataSI['2022'] },
+        { data: dataMap.dataTI['2022'] },
+        {
+          data: [
+            { name: '白额雁', value: dataMap.dataGDP['2022'][0].value },
+            { name: '白鹤', value: dataMap.dataGDP['2022'][1].value },
+            { name: '白琵鹭', value: dataMap.dataGDP['2022'][2].value },
+            { name: '白枕鹤', value: dataMap.dataGDP['2022'][3].value },
+            { name: '反嘴鹬', value: dataMap.dataGDP['2022'][4].value }
+          ]
+        }
+      ]
+    },
+    {
+      title: { text: '2025年五种鸟类数量统计' },
+      series: [
+        { data: dataMap.dataGDP['2025'] },
+        { data: dataMap.dataFinancial['2025'] },
+        { data: dataMap.dataEstate['2025'] },
+        { data: dataMap.dataPI['2025'] },
+        { data: dataMap.dataSI['2025'] },
+        { data: dataMap.dataTI['2025'] },
+        {
+          data: [
+            { name: '白额雁', value: dataMap.dataGDP['2025'][0].value },
+            { name: '白鹤', value: dataMap.dataGDP['2025'][1].value },
+            { name: '白琵鹭', value: dataMap.dataGDP['2025'][2].value },
+            { name: '白枕鹤', value: dataMap.dataGDP['2025'][3].value },
+            { name: '反嘴鹬', value: dataMap.dataGDP['2025'][4].value }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+    if (option && typeof option === 'object') {
+      myChart.setOption(option);
+    }
+
+    window.addEventListener('resize', myChart.resize);
+  </script>
+</body>
+</html>
